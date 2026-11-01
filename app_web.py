@@ -6,18 +6,18 @@ from datetime import datetime
 st.set_page_config(page_title="Didi bank", page_icon="💳", layout="centered")
 
 # ================= SEGURIDAD Y LOGIN =================
-# Cambia esta contraseña por la clave secreta que tú quieras usar
-CONTRASEÑA_CORRECTA = "6616"
-
 def verificar_password():
     if "autenticado" not in st.session_state:
         st.session_state["autenticado"] = False
 
     if not st.session_state["autenticado"]:
         st.title("🔒 Acceso Restringido")
+        # Lee la contraseña desde los secretos seguros de Streamlit Cloud (con respaldo "1234" por si lo pruebas local)
+        password_correcta = st.secrets.get("app_password", "1234")
+        
         clave = st.text_input("Ingresa la contraseña de Didi bank:", type="password")
         if st.button("Ingresar", type="primary"):
-            if clave == CONTRASEÑA_CORRECTA:
+            if clave == password_correcta:
                 st.session_state["autenticado"] = True
                 st.rerun()
             else:
@@ -59,7 +59,7 @@ def totales():
 # ================= INTERFAZ STREAMLIT =================
 st.title("💳 Didi bank")
 
-# Botón opcional para cerrar sesión
+# Botón en la barra lateral para cerrar sesión
 if st.sidebar.button("Cerrar Sesión"):
     st.session_state["autenticado"] = False
     st.rerun()
