@@ -1,0 +1,14 @@
+# Archivos de configuración y secretos locales
+.streamlit/
+
+# Entornos virtuales de Python
+venv/
+env/
+ENV/
+
+# Archivos temporales de Python
+__pycache__/
+*.pyc
+
+# Base de datos local (si prefieres que cada quien tenga la suya, aunque en tu caso subiste mis_finanzas.db, puedes omitir esta línea si quieres que se suba)
+# mis_finanzas.db
