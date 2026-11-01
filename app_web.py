@@ -13,7 +13,7 @@ def verificar_password():
     if not st.session_state["autenticado"]:
         st.title("🔒 Acceso Restringido")
         # Lee la contraseña desde los secretos seguros de Streamlit Cloud (con respaldo "1234" por si lo pruebas local)
-      password_correcta = st.secrets["app_password"]
+        password_correcta = st.secrets["app_password"]
         
         clave = st.text_input("Ingresa la contraseña de Didi bank:", type="password")
         if st.button("Ingresar", type="primary"):
