@@ -5,10 +5,33 @@ from datetime import datetime
 # Configuración de página para vista celular
 st.set_page_config(page_title="Didi bank", page_icon="💳", layout="centered")
 
-# Ruta directa para que funcione local y en la nube sin problemas
-RUTA_DB = "mis_finanzas.db"
+# ================= SEGURIDAD Y LOGIN =================
+# Cambia esta contraseña por la clave secreta que tú quieras usar
+CONTRASEÑA_CORRECTA = "6616"
+
+def verificar_password():
+    if "autenticado" not in st.session_state:
+        st.session_state["autenticado"] = False
+
+    if not st.session_state["autenticado"]:
+        st.title("🔒 Acceso Restringido")
+        clave = st.text_input("Ingresa la contraseña de Didi bank:", type="password")
+        if st.button("Ingresar", type="primary"):
+            if clave == CONTRASEÑA_CORRECTA:
+                st.session_state["autenticado"] = True
+                st.rerun()
+            else:
+                st.error("Contraseña incorrecta")
+        return False
+    return True
+
+# Si no ha puesto la contraseña correcta, detiene la ejecución aquí
+if not verificar_password():
+    st.stop()
 
 # ================= BASE DE DATOS =================
+RUTA_DB = "mis_finanzas.db"
+
 def consultar(sql, params=()):
     con = sqlite3.connect(RUTA_DB)
     try:
@@ -36,6 +59,11 @@ def totales():
 # ================= INTERFAZ STREAMLIT =================
 st.title("💳 Didi bank")
 
+# Botón opcional para cerrar sesión
+if st.sidebar.button("Cerrar Sesión"):
+    st.session_state["autenticado"] = False
+    st.rerun()
+
 # Pestañas para navegación en celular
 tab_menu, tab_agregar, tab_planes = st.tabs(["Menú Principal", "Agregar Movimiento", "Planes y Compras"])
 
@@ -45,7 +73,6 @@ with tab_menu:
     ing, egr = totales()
     total_gral = sum(s.values())
 
-    # Tarjetas de dinero en 3 columnas
     col1, col2, col3 = st.columns(3)
     col1.metric("DINERO EN BANCO", f"${s['Banco']:,.2f}")
     col2.metric("DINERO EN EFECTIVO", f"${s['Efectivo']:,.2f}")
@@ -84,8 +111,8 @@ with tab_agregar:
 
     st.divider()
     st.subheader("Traspasos")
-    col_t1, col_t2 = st.columns(2)
     monto_traspaso = st.number_input("Monto a traspasar ($):", min_value=0.01, step=10.0, key="traspaso")
+    col_t1, col_t2 = st.columns(2)
     
     if col_t1.button("Banco ➔ Efectivo"):
         if saldos()["Banco"] >= monto_traspaso:
